@@ -1,6 +1,6 @@
 const db = require("./db/connection.js");
 
-db.query(`SELECT * FROM comments;`)
+db.query(`SELECT * FROM emojis;`)
   .then(({ rows }) => {
     console.log(rows);
   })

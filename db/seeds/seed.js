@@ -2,14 +2,17 @@ const db = require("../connection");
 const format = require("pg-format");
 const { convertTimestampToDate, createLookupObj } = require("./utils.js");
 
-const seed = ({ topicData, userData, articleData, commentData }) => {
+const seed = ({ topicData, userData, articleData, commentData, emojiData }) => {
   return db
-    .query(`DROP TABLE IF EXISTS comments`)
+    .query(`DROP TABLE IF EXISTS emojis;`)
     .then(() => {
-      return db.query(`DROP TABLE IF EXISTS articles`);
+      return db.query(`DROP TABLE IF EXISTS comments;`);
     })
     .then(() => {
-      return db.query(`DROP TABLE IF EXISTS users`);
+      return db.query(`DROP TABLE IF EXISTS articles;`);
+    })
+    .then(() => {
+      return db.query(`DROP TABLE IF EXISTS users;`);
     })
     .then(() => {
       return db.query(`DROP TABLE IF EXISTS topics;`);
@@ -48,6 +51,12 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         votes INT DEFAULT 0,
         author VARCHAR REFERENCES users (username),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );`);
+    })
+    .then(() => {
+      return db.query(`CREATE TABLE emojis (
+        emoji_id SERIAL PRIMARY KEY,
+        emoji VARCHAR NOT NULL
         );`);
     })
     .then(() => {
@@ -112,6 +121,13 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         article_id, body, votes, author, created_at) VALUES %L;`,
         dataArr
       );
+      return db.query(formattedInput);
+    })
+    .then(() => {
+      const dataArr = emojiData.map((emoji) => {
+        return [emoji.emoji]
+      })
+      const formattedInput = format(`INSERT INTO emojis (emoji) VALUES %L;`, dataArr);
       return db.query(formattedInput);
     });
 };
