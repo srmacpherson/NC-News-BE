@@ -1,12 +1,12 @@
 const db = require("./db/connection.js");
 
-db.query(`SELECT * FROM comments WHERE votes > 10;`)
-.then(({rows}) => {
+db.query(`SELECT * FROM comments;`)
+  .then(({ rows }) => {
     console.log(rows);
-})
-.then(() => {
-    db.end()
-})
-.catch((err) => {
+  })
+  .then(() => {
+    db.end();
+  })
+  .catch((err) => {
     console.log(err);
-})
+  });

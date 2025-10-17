@@ -1,6 +1,6 @@
 const db = require("../connection");
 const format = require("pg-format");
-const { convertTimestampToDate } = require("./utils.js");
+const { convertTimestampToDate, createLookupObj } = require("./utils.js");
 
 const seed = ({ topicData, userData, articleData, commentData }) => {
   return db
@@ -22,31 +22,11 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       );`);
     })
     .then(() => {
-      const dataArr = topicData.map((topic) => {
-        return [topic.slug, topic.description, topic.img_url];
-      });
-      const formattedInput = format(
-        `INSERT INTO topics (slug, description, img_url) VALUES %L;`,
-        dataArr
-      );
-      return db.query(formattedInput);
-    })
-    .then(() => {
       return db.query(`CREATE TABLE users (
         username VARCHAR PRIMARY KEY UNIQUE,
         name VARCHAR,
         avatar_url VARCHAR(1000)
         );`);
-    })
-    .then(() => {
-      const dataArr = userData.map((user) => {
-        return [user.username, user.name, user.avatar_url];
-      });
-      const formattedInput = format(
-        `INSERT INTO users (username, name, avatar_url) VALUES %L;`,
-        dataArr
-      );
-      return db.query(formattedInput);
     })
     .then(() => {
       return db.query(`CREATE TABLE articles (
@@ -59,6 +39,36 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         votes INT DEFAULT 0,
         article_img_url VARCHAR(1000)
         );`);
+    })
+    .then(() => {
+      return db.query(`CREATE TABLE comments (
+        comment_id SERIAL PRIMARY KEY,
+        article_id INT REFERENCES articles (article_id),
+        body TEXT,
+        votes INT DEFAULT 0,
+        author VARCHAR REFERENCES users (username),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );`);
+    })
+    .then(() => {
+      const dataArr = topicData.map((topic) => {
+        return [topic.slug, topic.description, topic.img_url];
+      });
+      const formattedInput = format(
+        `INSERT INTO topics (slug, description, img_url) VALUES %L;`,
+        dataArr
+      );
+      return db.query(formattedInput);
+    })
+    .then(() => {
+      const dataArr = userData.map((user) => {
+        return [user.username, user.name, user.avatar_url];
+      });
+      const formattedInput = format(
+        `INSERT INTO users (username, name, avatar_url) VALUES %L;`,
+        dataArr
+      );
+      return db.query(formattedInput);
     })
     .then(() => {
       const newArticleData = [];
@@ -77,32 +87,30 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         ];
       });
       const formattedInput = format(
-        `INSERT INTO articles (title, topic, author, body, created_at, votes, article_img_url) VALUES %L;`,
+        `INSERT INTO articles (title, topic, author, body, created_at, votes, article_img_url) VALUES %L RETURNING*;`,
         dataArr
       );
       return db.query(formattedInput);
     })
-    .then(() => {
-      return db.query(`CREATE TABLE comments (
-        comment_id SERIAL PRIMARY KEY,
-        article_id INT REFERENCES articles (article_id),
-        body TEXT,
-        votes INT DEFAULT 0,
-        author VARCHAR REFERENCES users (username),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );`);
-    })
-    .then(() => {
+    .then(({ rows }) => {
+      console.log(rows);
+      const lookup = createLookupObj(rows, "title", "article_id");
       const newCommentData = [];
       for (const commentObj of commentData) {
         newCommentData.push(convertTimestampToDate(commentObj));
       }
       const dataArr = newCommentData.map((comment) => {
-        return [comment.body, comment.votes, comment.created_at];
+        return [
+          lookup[comment.article_title],
+          comment.body,
+          comment.votes,
+          comment.author,
+          comment.created_at,
+        ];
       });
       const formattedInput = format(
         `INSERT INTO comments (
-        body, votes, created_at) VALUES %L;`,
+        article_id, body, votes, author, created_at) VALUES %L;`,
         dataArr
       );
       return db.query(formattedInput);
