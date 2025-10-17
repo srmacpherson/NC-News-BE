@@ -1,6 +1,6 @@
 const db = require("../connection");
 const format = require("pg-format");
-const {convertTimestampToDate} = require("./utils.js");
+const { convertTimestampToDate } = require("./utils.js");
 
 const seed = ({ topicData, userData, articleData, commentData }) => {
   return db
@@ -41,8 +41,11 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
     .then(() => {
       const dataArr = userData.map((user) => {
         return [user.username, user.name, user.avatar_url];
-      })
-      const formattedInput = format(`INSERT INTO users (username, name, avatar_url) VALUES %L;`, dataArr);
+      });
+      const formattedInput = format(
+        `INSERT INTO users (username, name, avatar_url) VALUES %L;`,
+        dataArr
+      );
       return db.query(formattedInput);
     })
     .then(() => {
@@ -60,14 +63,23 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
     .then(() => {
       const newArticleData = [];
       for (let articleObj of articleData) {
-        newArticleData.push(convertTimestampToDate(articleObj))
+        newArticleData.push(convertTimestampToDate(articleObj));
       }
-      // console.log(newArticleData)
       const dataArr = newArticleData.map((article) => {
-        return [article.title, article.topic, article.author, article.body, article.created_at, article.votes, article.article_img_url];
-      })
-      // console.log(dataArr)
-      const formattedInput = format(`INSERT INTO articles (title, topic, author, body, created_at, votes, article_img_url) VALUES %L;`, dataArr);
+        return [
+          article.title,
+          article.topic,
+          article.author,
+          article.body,
+          article.created_at,
+          article.votes,
+          article.article_img_url,
+        ];
+      });
+      const formattedInput = format(
+        `INSERT INTO articles (title, topic, author, body, created_at, votes, article_img_url) VALUES %L;`,
+        dataArr
+      );
       return db.query(formattedInput);
     })
     .then(() => {
@@ -86,11 +98,14 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         newCommentData.push(convertTimestampToDate(commentObj));
       }
       const dataArr = newCommentData.map((comment) => {
-        return [comment.body, comment.votes, comment.created_at]
-      }) 
-      const formattedInput = format(`INSERT INTO comments (
-        body, votes, created_at) VALUES %L;`, dataArr);
+        return [comment.body, comment.votes, comment.created_at];
+      });
+      const formattedInput = format(
+        `INSERT INTO comments (
+        body, votes, created_at) VALUES %L;`,
+        dataArr
+      );
       return db.query(formattedInput);
-    })
+    });
 };
 module.exports = seed;
