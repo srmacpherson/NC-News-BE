@@ -1,9 +1,11 @@
 # NC News Seeding
 
-You will need to create 2 new .env files:
+You will need to run 'npm run setup-dbs' to create the test and development databases.
 
-.env.development 
+Then, you will need to create 2 new .env files:
+
+'.env.development' 
 &
-.env.test
+'.env.test'
 
-In each, you must provide a reference to the appropriate database ( PGDATABASE=<'your-database'> ).
+In each, you must provide a reference to the appropriate database with PGDATABASE=<'your-database'> 
