@@ -93,7 +93,6 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       return db.query(formattedInput);
     })
     .then(({ rows }) => {
-      console.log(rows);
       const lookup = createLookupObj(rows, "title", "article_id");
       const newCommentData = [];
       for (const commentObj of commentData) {
