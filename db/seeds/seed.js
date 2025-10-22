@@ -56,6 +56,7 @@ const seed = ({ topicData, userData, articleData, commentData, emojiData }) => {
     .then(() => {
       return db.query(`CREATE TABLE emojis (
         emoji_id SERIAL PRIMARY KEY,
+        comment INT REFERENCES comments (comment_id),
         emoji VARCHAR NOT NULL
         );`);
     })
@@ -118,16 +119,16 @@ const seed = ({ topicData, userData, articleData, commentData, emojiData }) => {
       });
       const formattedInput = format(
         `INSERT INTO comments (
-        article_id, body, votes, author, created_at) VALUES %L;`,
+        article_id, body, votes, author, created_at) VALUES %L RETURNING *;`,
         dataArr
       );
       return db.query(formattedInput);
     })
-    .then(() => {
-      const dataArr = emojiData.map((emoji) => {
-        return [emoji.emoji]
+    .then(({rows}) => {
+      const dataArr = emojiData.map((emoji, index) => {
+        return [rows[index].comment_id, emoji.emoji]
       })
-      const formattedInput = format(`INSERT INTO emojis (emoji) VALUES %L;`, dataArr);
+      const formattedInput = format(`INSERT INTO emojis (comment, emoji) VALUES %L;`, dataArr);
       return db.query(formattedInput);
     });
 };
