@@ -1,6 +1,6 @@
 const db = require("./db/connection.js");
 
-db.query(`SELECT COUNT(*) AS comment_count FROM comments WHERE article_id = 29;`)
+db.query(`SELECT * from articles;`)
   .then(({ rows }) => {
     console.log(rows);
   })

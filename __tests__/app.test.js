@@ -48,6 +48,34 @@ describe("GET /api/articles", () => {
     });
 });
 
+describe("GET /api/articles/:article_id", () => {
+    test("200: Responds with an object with the key of article and the value of an article object", () => {
+        return request(app)
+        .get('/api/articles/7')
+        .expect(200)
+        .then(({body}) => {
+            const { author, title, article_id, topic, created_at, votes, article_img_url } = body.article;
+            expect(typeof body.article).toBe("object");
+            expect(typeof author).toBe("string");
+            expect(typeof title).toBe("string");
+            expect(article_id).toBe(7);
+            expect(typeof body.article.body).toBe("string");
+            expect(typeof topic).toBe("string");
+            expect(typeof created_at).toBe("string");
+            expect(typeof votes).toBe("number");
+            expect(typeof article_img_url).toBe("string");
+        });
+    });
+    test("400: Responds with an error message when passed a bad article ID", () => {
+        return request(app)
+        .get('/api/articles/9823123')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe("Invalid input");
+        });
+    });
+});
+
 describe("GET /api/users", () => {
     test("200: Responds with an object with the key of users and the value of an array of objects", () => {
         return request(app)

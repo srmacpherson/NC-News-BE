@@ -1,10 +1,20 @@
-const { readArticles } = require("../models/articles.js");
+const { readArticles, readArticleById } = require("../models/articles.js");
 
 function getArticles(req, res) {
-    readArticles()
-    .then((articles) => {
-        return res.status(200).send({ articles })
-    })
+  return readArticles().then((articles) => {
+    res.status(200).send({ articles });
+  });
 }
 
-module.exports = { getArticles }
+function getArticleById(req, res, next) {
+  const { article_id } = req.params;
+  return readArticleById(article_id)
+    .then((article) => {
+      res.status(200).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
+module.exports = { getArticles, getArticleById };

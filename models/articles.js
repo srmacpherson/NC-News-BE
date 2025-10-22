@@ -21,6 +21,20 @@ function readArticles() {
     })
 }
 
-module.exports = { readArticles }
+function readArticleById(article_id) {
+    return db.query(`SELECT * FROM articles WHERE article_id = $1;`, [article_id])
+    .then(({rows}) => {
+        if (rows.length === 0) {
+            const err = new Error('Invalid ID.');
+            err.status = 400;
+            err.msg = 'Invalid input'
+            throw err;
+        } else {
+        return rows[0];
+        }
+    })
+}
+
+module.exports = { readArticles, readArticleById }
 
 
