@@ -66,12 +66,20 @@ describe("GET /api/articles/:article_id", () => {
             expect(typeof article_img_url).toBe("string");
         });
     });
-    test("400: Responds with an error message when passed a bad article ID", () => {
+    test("40: Responds with an error message when passed a bad article ID", () => {
         return request(app)
-        .get('/api/articles/9823123')
+        .get('/api/articles/notAnId')
         .expect(400)
         .then(({body}) => {
             expect(body.msg).toBe("Invalid input");
+        });
+    });
+    test("404: Responds with an error message when passed a valid article ID but no results are found", () => {
+        return request(app)
+        .get('/api/articles/8278')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe("Not found");
         });
     });
 });
