@@ -112,6 +112,22 @@ describe("GET /api/articles/:article_id/comments", () => {
             };
         });
     });
+    test("400: Responds with an error message when passed a bad article ID", () => {
+        return request(app)
+        .get('/api/articles/not-an-id/comments')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe("Invalid input");
+        });
+    })
+    test("404: Responds with an error message when passed a valid article ID but no results are found", () => {
+        return request(app)
+        .get('/api/articles/7345/comments')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe("Not found");
+        });
+    });
 });
 
 describe("GET /api/users", () => {
