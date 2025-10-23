@@ -244,3 +244,15 @@ describe("PUT /api/articles/:article_id", () => {
         });
     });
 });
+
+describe("DELETE /api/comments/:comment_id", () => {
+    test("204: Responds with status 204 and no content", () => {
+        return request(app)
+        .delete('/api/comments/1')
+        .expect(204)
+        .then(({body}) => {
+            expect(typeof body).toBe("object");
+            expect(Object.keys(body).length).toBe(0);
+        });
+    });
+});
