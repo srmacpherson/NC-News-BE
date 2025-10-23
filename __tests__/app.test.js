@@ -8,9 +8,20 @@ beforeEach(() => {
     return seed(data);
 });
 
-// afterAll(() => {
-//     return db.end();
-// });
+afterAll(() => {
+    return db.end();
+});
+
+describe("ALL /*", () => {
+    test("404: Responds with a 404 error when the path is not found", () => {
+        return request(app)
+        .get('/non-existent-path')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe("Path Not Found");
+        });
+    });
+});
 
 describe("GET /api/topics", () => {
     test("200: Responds with an object with the key of topics and the value of an array of topic objects", () => {
@@ -66,9 +77,9 @@ describe("GET /api/articles/:article_id", () => {
             expect(typeof article_img_url).toBe("string");
         });
     });
-    test("40: Responds with an error message when passed a bad article ID", () => {
+    test("400: Responds with an error message when passed a bad article ID", () => {
         return request(app)
-        .get('/api/articles/notAnId')
+        .get('/api/articles/not-an-id')
         .expect(400)
         .then(({body}) => {
             expect(body.msg).toBe("Invalid input");
@@ -80,6 +91,25 @@ describe("GET /api/articles/:article_id", () => {
         .expect(404)
         .then(({body}) => {
             expect(body.msg).toBe("Not found");
+        });
+    });
+});
+
+describe("GET /api/articles/:article_id/comments", () => {
+    test("200: Responds with an object with the key of comments and the value of an array of comments for the given article_id", () => {
+        return request(app)
+        .get('/api/articles/9/comments')
+        .expect(200)
+        .then(({body}) => {
+            expect(Array.isArray(body.comments)).toBe(true);
+            for (const comment of body.comments) {
+                expect(typeof comment.comment_id).toBe("number");
+                expect(typeof comment.votes).toBe("number");
+                expect(typeof comment.created_at).toBe("string");
+                expect(typeof comment.author).toBe("string");
+                expect(typeof comment.body).toBe("string");
+                expect(comment.article_id).toBe(9);
+            };
         });
     });
 });
