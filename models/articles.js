@@ -48,4 +48,13 @@ function readArticleCommentsById(article_id) {
     });
 }
 
-module.exports = { readArticles, readArticleById, readArticleCommentsById };
+function insertCommentByArticleId(article_id, input) {
+    throwErrorIfNaN(article_id)
+    const { username, body } = input;
+    return db.query(`INSERT INTO comments (author, body, article_id) VALUES ((SELECT username FROM users WHERE username = $1), $2, $3) RETURNING *;`, [username, body, article_id])
+    .then(({rows}) => {
+        return rows[0]
+    })
+}
+
+module.exports = { readArticles, readArticleById, readArticleCommentsById, insertCommentByArticleId };
