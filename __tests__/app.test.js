@@ -206,7 +206,7 @@ describe("POST /api/articles/:article_id/comments", () => {
 
 describe("PUT /api/articles/:article_id", () => {
     test("200: Responds with the updated article", () => {
-        const payload = { inc_votes: 10 }
+        const payload = { inc_votes: -10 }
         return request(app)
         .put('/api/articles/4')
         .send(payload)
