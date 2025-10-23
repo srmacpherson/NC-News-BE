@@ -239,6 +239,7 @@ describe("PUT /api/articles/:article_id", () => {
         return request(app)
         .put('/api/articles/6543')
         .send(payload)
+        .expect(404)
         .then(({body})=> {
             expect(body.msg).toBe("Not found");
         });
@@ -253,6 +254,22 @@ describe("DELETE /api/comments/:comment_id", () => {
         .then(({body}) => {
             expect(typeof body).toBe("object");
             expect(Object.keys(body).length).toBe(0);
+        });
+    });
+    test("400: Responds with an error message when passed a bad comment ID", () => {
+        return request(app)
+        .delete('/api/comments/bad-id')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe("Invalid input");
+        })
+    })
+    test("404: Responds with an error message when passed a valid comment ID but no results are found", () => {
+        return request(app)
+        .delete('/api/comments/6543')
+        .expect(404)
+        .then(({body})=> {
+            expect(body.msg).toBe("Not found");
         });
     });
 });
