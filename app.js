@@ -11,8 +11,8 @@ app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles/:article_id/comments", getArticleCommentsById);
 app.get("/api/users", getUsers);
+app.all("/*invalid-path", handlePathNotFound);
 
-app.use(handlePathNotFound);
 app.use(handleCustomErrors);
 app.use(handleServerErrors);
 
