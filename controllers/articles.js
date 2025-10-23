@@ -3,6 +3,7 @@ const {
   readArticleById,
   readArticleCommentsById,
   insertCommentByArticleId,
+  updateVoteCountByArticleId,
 } = require("../models/articles.js");
 
 function getArticles(req, res) {
@@ -28,12 +29,25 @@ function getArticleCommentsById(req, res) {
 }
 
 function postCommentByArticleId(req, res) {
-    const { article_id } = req.params;
-    
-    return insertCommentByArticleId(article_id, req.body)
-    .then((comment) => {
-        res.status(201).send({ comment });
-    })
+  const { article_id } = req.params;
+
+  return insertCommentByArticleId(article_id, req.body).then((comment) => {
+    res.status(201).send({ comment });
+  });
 }
 
-module.exports = { getArticles, getArticleById, getArticleCommentsById, postCommentByArticleId };
+function incrementVotesByArticleId(req, res) {
+  const { article_id } = req.params;
+
+  return updateVoteCountByArticleId(article_id, req.body).then((article) => {
+    res.status(200).send({ article });
+  });
+}
+
+module.exports = {
+  getArticles,
+  getArticleById,
+  getArticleCommentsById,
+  postCommentByArticleId,
+  incrementVotesByArticleId,
+};

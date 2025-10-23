@@ -60,8 +60,18 @@ function insertCommentByArticleId(article_id, input) {
       [username, body, article_id]
     )
     .then(({ rows }) => {
+        throwErrorIfEmpty(rows);
       return rows[0];
     });
+}
+
+function updateVoteCountByArticleId(article_id, input) {
+  throwErrorIfNaN(article_id);
+  const { inc_votes } = input;
+  return db.query(`UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;`, [inc_votes, article_id]).then(({ rows }) => {
+    throwErrorIfEmpty(rows);
+    return rows[0];
+  });
 }
 
 module.exports = {
@@ -69,4 +79,5 @@ module.exports = {
   readArticleById,
   readArticleCommentsById,
   insertCommentByArticleId,
+  updateVoteCountByArticleId,
 };

@@ -203,3 +203,44 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("PUT /api/articles/:article_id", () => {
+    test("200: Responds with the updated article", () => {
+        const payload = { inc_votes: 10 }
+        return request(app)
+        .put('/api/articles/4')
+        .send(payload)
+        .expect(200)
+        .then(({body}) => {
+            const { article_id, title, topic, author, created_at, votes, article_img_url } = body.article;
+            expect(typeof body.article).toBe("object");
+            expect(article_id).toBe(4);
+            expect(typeof title).toBe("string");
+            expect(typeof topic).toBe("string");
+            expect(typeof author).toBe("string");
+            expect(typeof body.article.body).toBe("string");
+            expect(typeof created_at).toBe("string");
+            expect(typeof votes).toBe("number");
+            expect(typeof article_img_url).toBe("string");
+        });
+    });
+    test("400: Responds with an error message when passed a bad article ID", () => {
+        const payload = { inc_votes: 10 }
+        return request(app)
+        .put('/api/articles/bad-id')
+        .send(payload)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe("Invalid input");
+        })
+    })
+    test("404: Responds with an error message when passed a valid article ID but no results are found", () => {
+        const payload = { inc_votes: 10 }
+        return request(app)
+        .put('/api/articles/6543')
+        .send(payload)
+        .then(({body})=> {
+            expect(body.msg).toBe("Not found");
+        });
+    });
+});
