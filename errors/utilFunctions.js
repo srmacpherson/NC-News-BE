@@ -6,4 +6,13 @@ function throwErrorIfEmpty(rows) {
     };
 };
 
-module.exports = { throwErrorIfEmpty }
+function throwErrorIfNaN(possibleNum) {
+    const parsedId = Number(possibleNum);
+  if (isNaN(parsedId)) {
+    const err = new Error("Invalid input");
+    err.status = 400;
+    throw err;
+  }
+}
+
+module.exports = { throwErrorIfEmpty, throwErrorIfNaN }

@@ -1,5 +1,5 @@
 const db = require("../db/connection.js");
-const { throwErrorIfEmpty } = require("../errors/utilFunctions.js");
+const { throwErrorIfEmpty, throwErrorIfNaN } = require("../errors/utilFunctions.js");
 
 function readArticles() {
   return db
@@ -26,12 +26,7 @@ function readArticles() {
 }
 
 function readArticleById(article_id) {
-  const parsedId = Number(article_id);
-  if (isNaN(parsedId)) {
-    const err = new Error("Invalid input");
-    err.status = 400;
-    throw err;
-  }
+  throwErrorIfNaN(article_id)
   return db
     .query(`SELECT * FROM articles WHERE article_id = $1;`, [article_id])
     .then(({ rows }) => {
@@ -41,12 +36,7 @@ function readArticleById(article_id) {
 }
 
 function readArticleCommentsById(article_id) {
-  const parsedId = Number(article_id);
-  if (isNaN(parsedId)) {
-    const err = new Error("Invalid input");
-    err.status = 400;
-    throw err;
-  }
+  throwErrorIfNaN(article_id)
   return db
     .query(
       `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;`,
