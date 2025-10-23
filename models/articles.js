@@ -1,5 +1,8 @@
 const db = require("../db/connection.js");
-const { throwErrorIfEmpty, throwErrorIfNaN } = require("../errors/utilFunctions.js");
+const {
+  throwErrorIfEmpty,
+  throwErrorIfNaN,
+} = require("../errors/utilFunctions.js");
 
 function readArticles() {
   return db
@@ -26,7 +29,7 @@ function readArticles() {
 }
 
 function readArticleById(article_id) {
-  throwErrorIfNaN(article_id)
+  throwErrorIfNaN(article_id);
   return db
     .query(`SELECT * FROM articles WHERE article_id = $1;`, [article_id])
     .then(({ rows }) => {
@@ -36,7 +39,7 @@ function readArticleById(article_id) {
 }
 
 function readArticleCommentsById(article_id) {
-  throwErrorIfNaN(article_id)
+  throwErrorIfNaN(article_id);
   return db
     .query(
       `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC;`,
@@ -49,12 +52,21 @@ function readArticleCommentsById(article_id) {
 }
 
 function insertCommentByArticleId(article_id, input) {
-    throwErrorIfNaN(article_id)
-    const { username, body } = input;
-    return db.query(`INSERT INTO comments (author, body, article_id) VALUES ((SELECT username FROM users WHERE username = $1), $2, $3) RETURNING *;`, [username, body, article_id])
-    .then(({rows}) => {
-        return rows[0]
-    })
+  throwErrorIfNaN(article_id);
+  const { username, body } = input;
+  return db
+    .query(
+      `INSERT INTO comments (author, body, article_id) VALUES ((SELECT username FROM users WHERE username = $1), $2, $3) RETURNING *;`,
+      [username, body, article_id]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
 }
 
-module.exports = { readArticles, readArticleById, readArticleCommentsById, insertCommentByArticleId };
+module.exports = {
+  readArticles,
+  readArticleById,
+  readArticleCommentsById,
+  insertCommentByArticleId,
+};

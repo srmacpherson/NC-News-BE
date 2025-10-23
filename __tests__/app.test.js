@@ -176,4 +176,30 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(typeof created_at).toBe("string");
       });
   });
+  test("400: Responds with an error message when passed a bad article ID", () => {
+    const payload = {
+      username: "butter_bridge",
+      body: "duck, duck, duck, duck, duck, duck... goose!",
+    };
+    return request(app)
+      .post("/api/articles/not-an-id/comments")
+      .send(payload)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("404: Responds with an error message when passed a valid article ID but no results are found", () => {
+    const payload = {
+      username: "butter_bridge",
+      body: "duck, duck, duck, duck, duck, duck... goose!",
+    };
+    return request(app)
+      .post("/api/articles/8278/comments")
+      .send(payload)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found");
+      });
+  });
 });
