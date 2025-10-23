@@ -1,4 +1,5 @@
 const db = require("../db/connection.js");
+const { throwErrorIfEmpty } = require("../errors/utilFunctions.js");
 
 function readArticles() {
   return db
@@ -34,13 +35,8 @@ function readArticleById(article_id) {
   return db
     .query(`SELECT * FROM articles WHERE article_id = $1;`, [article_id])
     .then(({ rows }) => {
-      if (rows.length === 0) {
-        const err = new Error("Not found");
-        err.status = 404;
-        throw err;
-      } else {
-        return rows[0];
-      }
+      throwErrorIfEmpty(rows);
+      return rows[0];
     });
 }
 
@@ -57,13 +53,8 @@ function readArticleCommentsById(article_id) {
       [article_id]
     )
     .then(({ rows }) => {
-      if (rows.length === 0) {
-        const err = new Error("Not found");
-        err.status = 404;
-        throw err;
-      } else {
-        return rows;
-      }
+      throwErrorIfEmpty(rows);
+      return rows;
     });
 }
 
