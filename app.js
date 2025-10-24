@@ -8,6 +8,7 @@ const { handlePathNotFound } = require("./errors/pathNotFound.js");
 const { handleCustomErrors, handleServerErrors } = require("./errors/handleCustomErrors.js");
 
 app.use(express.json())
+
 app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleById);

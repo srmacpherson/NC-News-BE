@@ -7,7 +7,9 @@ const {
 } = require("../models/articles.js");
 
 function getArticles(req, res) {
-  return readArticles().then((articles) => {
+  const { sort_by, order } = req.query;
+
+  return readArticles(sort_by, order).then((articles) => {
     res.status(200).send({ articles });
   });
 }

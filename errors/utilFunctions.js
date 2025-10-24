@@ -15,4 +15,21 @@ function throwErrorIfNaN(possibleNum) {
   }
 }
 
-module.exports = { throwErrorIfEmpty, throwErrorIfNaN }
+function throwErrorIfNotAnOrder(order) {
+  const validOrders = {
+            asc: 'valid',
+            desc: 'valid',
+            ASC: 'valid',
+            DESC: 'valid',
+        }
+
+  if (order && validOrders[order]) {
+        return true;
+      } else {
+        const err = new Error("Invalid input");
+        err.status = 400;
+        throw err;
+      }
+}
+
+module.exports = { throwErrorIfEmpty, throwErrorIfNaN, throwErrorIfNotAnOrder }

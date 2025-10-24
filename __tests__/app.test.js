@@ -45,6 +45,7 @@ describe("GET /api/articles", () => {
       .expect(200)
       .then(({ body }) => {
         expect(Array.isArray(body.articles)).toBe(true);
+        expect(body.articles).toBeSortedBy("created_at", { descending: true });
         for (const article of body.articles) {
           expect(typeof article.author).toBe("string");
           expect(typeof article.title).toBe("string");
@@ -56,6 +57,41 @@ describe("GET /api/articles", () => {
           expect(typeof article.comment_count).toBe("string");
         }
       });
+  });
+  test("200: Responds with the data making use of the 'sort_by' and/or 'order' queries", () => {
+    return request(app)
+      .get('/api/articles?sort_by=article_id&order=desc')
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body.articles)).toBe(true);
+        expect(body.articles).toBeSortedBy("article_id", { descending: true });
+        for (const article of body.articles) {
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+        }
+      });
+  })
+  test("400: Responds with an error message when passed a bad 'sort_by' query", () => {
+    return request(app)
+    .get('/api/articles?sort_by=not_a_column&order=desc')
+    .expect(400)
+    .then(({body}) => {
+        expect(body.msg).toBe("Invalid input")
+    });
+  });
+  test("400: Responds with an error message when passed a bad 'order' query", () => {
+    return request(app)
+    .get('/api/articles?sort_by=article_id&order=non_directional')
+    .expect(400)
+    .then(({body}) => {
+        expect(body.msg).toBe("Invalid input")
+    });
   });
 });
 
@@ -166,13 +202,16 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send(payload)
       .expect(201)
       .then(({ body }) => {
-        const { comment_id, article_id, votes, author, created_at } = body.comment;
+        const { comment_id, article_id, votes, author, created_at } =
+          body.comment;
         expect(typeof body).toBe("object");
         expect(typeof comment_id).toBe("number");
         expect(typeof article_id).toBe("number");
         expect(votes).toBe(0);
         expect(author).toBe("butter_bridge");
-        expect(body.comment.body).toBe("duck, duck, duck, duck, duck, duck... goose!");
+        expect(body.comment.body).toBe(
+          "duck, duck, duck, duck, duck, duck... goose!"
+        );
         expect(typeof created_at).toBe("string");
       });
   });
@@ -205,71 +244,79 @@ describe("POST /api/articles/:article_id/comments", () => {
 });
 
 describe("PUT /api/articles/:article_id", () => {
-    test("200: Responds with the updated article", () => {
-        const payload = { inc_votes: -10 }
-        return request(app)
-        .put('/api/articles/4')
-        .send(payload)
-        .expect(200)
-        .then(({body}) => {
-            const { article_id, title, topic, author, created_at, votes, article_img_url } = body.article;
-            expect(typeof body.article).toBe("object");
-            expect(article_id).toBe(4);
-            expect(typeof title).toBe("string");
-            expect(typeof topic).toBe("string");
-            expect(typeof author).toBe("string");
-            expect(typeof body.article.body).toBe("string");
-            expect(typeof created_at).toBe("string");
-            expect(typeof votes).toBe("number");
-            expect(typeof article_img_url).toBe("string");
-        });
-    });
-    test("400: Responds with an error message when passed a bad article ID", () => {
-        const payload = { inc_votes: 10 }
-        return request(app)
-        .put('/api/articles/bad-id')
-        .send(payload)
-        .expect(400)
-        .then(({body}) => {
-            expect(body.msg).toBe("Invalid input");
-        })
-    })
-    test("404: Responds with an error message when passed a valid article ID but no results are found", () => {
-        const payload = { inc_votes: 10 }
-        return request(app)
-        .put('/api/articles/6543')
-        .send(payload)
-        .expect(404)
-        .then(({body})=> {
-            expect(body.msg).toBe("Not found");
-        });
-    });
+  test("200: Responds with the updated article", () => {
+    const payload = { inc_votes: -10 };
+    return request(app)
+      .put("/api/articles/4")
+      .send(payload)
+      .expect(200)
+      .then(({ body }) => {
+        const {
+          article_id,
+          title,
+          topic,
+          author,
+          created_at,
+          votes,
+          article_img_url,
+        } = body.article;
+        expect(typeof body.article).toBe("object");
+        expect(article_id).toBe(4);
+        expect(typeof title).toBe("string");
+        expect(typeof topic).toBe("string");
+        expect(typeof author).toBe("string");
+        expect(typeof body.article.body).toBe("string");
+        expect(typeof created_at).toBe("string");
+        expect(typeof votes).toBe("number");
+        expect(typeof article_img_url).toBe("string");
+      });
+  });
+  test("400: Responds with an error message when passed a bad article ID", () => {
+    const payload = { inc_votes: 10 };
+    return request(app)
+      .put("/api/articles/bad-id")
+      .send(payload)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("404: Responds with an error message when passed a valid article ID but no results are found", () => {
+    const payload = { inc_votes: 10 };
+    return request(app)
+      .put("/api/articles/6543")
+      .send(payload)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found");
+      });
+  });
 });
 
 describe("DELETE /api/comments/:comment_id", () => {
-    test("204: Responds with status 204 and no content", () => {
-        return request(app)
-        .delete('/api/comments/1')
-        .expect(204)
-        .then(({body}) => {
-            expect(typeof body).toBe("object");
-            expect(Object.keys(body).length).toBe(0);
-        });
-    });
-    test("400: Responds with an error message when passed a bad comment ID", () => {
-        return request(app)
-        .delete('/api/comments/bad-id')
-        .expect(400)
-        .then(({body}) => {
-            expect(body.msg).toBe("Invalid input");
-        })
-    })
-    test("404: Responds with an error message when passed a valid comment ID but no results are found", () => {
-        return request(app)
-        .delete('/api/comments/6543')
-        .expect(404)
-        .then(({body})=> {
-            expect(body.msg).toBe("Not found");
-        });
-    });
+  test("204: Responds with status 204 and no content", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then(({ body }) => {
+        expect(typeof body).toBe("object");
+        expect(Object.keys(body).length).toBe(0);
+      });
+  });
+  test("400: Responds with an error message when passed a bad comment ID", () => {
+    return request(app)
+      .delete("/api/comments/bad-id")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("404: Responds with an error message when passed a valid comment ID but no results are found", () => {
+    return request(app)
+      .delete("/api/comments/6543")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found");
+      });
+  });
 });
