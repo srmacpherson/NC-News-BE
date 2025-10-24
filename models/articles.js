@@ -21,8 +21,7 @@ function readArticles(sort_by, order) {
         GROUP BY 
         articles.article_id`;
 
-  if (sort_by) {
-    return isValidColumn(sort_by, "articles").then(() => {
+  if (sort_by && isValidColumn(sort_by)) {
       queryStr += ` ORDER BY ${sort_by}`;
       if (throwErrorIfNotAnOrder(order)) {
         queryStr += ` ${order}`;
@@ -30,7 +29,6 @@ function readArticles(sort_by, order) {
       return db.query(queryStr).then(({ rows }) => {
         return rows;
       });
-    });
   } else {
     queryStr += " ORDER BY created_at DESC";
   }

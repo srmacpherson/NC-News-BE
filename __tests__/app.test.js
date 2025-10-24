@@ -77,6 +77,25 @@ describe("GET /api/articles", () => {
         }
       });
   })
+  test.skip("200: Responds with the data making use of the topic query", () => {
+    return request(app)
+    .get('/api/articles?topic=cats')
+    .then(({body}) => {
+        // console.log(body)
+        expect(Array.isArray(body.articles)).toBe(true);
+        expect(body.articles).toBeSortedBy("created_at", { descending: true });
+        for (const article of body.articles) {
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(article.topic).toBe("cats");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+        }
+    })
+  })
   test("400: Responds with an error message when passed a bad 'sort_by' query", () => {
     return request(app)
     .get('/api/articles?sort_by=not_a_column&order=desc')

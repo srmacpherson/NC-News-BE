@@ -5,7 +5,7 @@ const { removeCommentById } = require("./controllers/comments.js");
 const { getTopics } = require("./controllers/topics.js");
 const { getUsers } = require("./controllers/users.js");
 const { handlePathNotFound } = require("./errors/pathNotFound.js");
-const { handleCustomErrors, handleServerErrors } = require("./errors/handleCustomErrors.js");
+const { handleCustomErrors, handleServerErrors, handlePSQLErrors } = require("./errors/handleCustomErrors.js");
 
 app.use(express.json())
 
@@ -19,6 +19,7 @@ app.put("/api/articles/:article_id", incrementVotesByArticleId);
 app.delete("/api/comments/:comment_id", removeCommentById);
 app.all("/*invalid-path", handlePathNotFound);
 
+app.use(handlePSQLErrors);
 app.use(handleCustomErrors);
 app.use(handleServerErrors);
 
