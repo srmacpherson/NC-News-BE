@@ -8,8 +8,7 @@ const {
 
 function getArticles(req, res) {
   const { sort_by, order, topic } = req.query;
-  console.log(sort_by, order, topic)
-
+  
   return readArticles(sort_by, order, topic).then((articles) => {
     res.status(200).send({ articles });
   });

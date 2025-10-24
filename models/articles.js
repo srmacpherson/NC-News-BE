@@ -8,7 +8,6 @@ const {
 } = require("../errors/utilFunctions.js");
 
 function readArticles(sort_by = "created_at", order = "DESC", topic) {
-  console.log(topic);
   let queryStr = `SELECT 
         articles.author, 
         articles.title, 
@@ -21,8 +20,9 @@ function readArticles(sort_by = "created_at", order = "DESC", topic) {
         FROM articles
         LEFT JOIN comments ON articles.article_id = comments.article_id`;
 
+
   if (topic) {
-    queryStr += format(`WHERE articles.topic = %L`, topic);
+    queryStr += format(` WHERE articles.topic = %L`, topic);
   }
 
   queryStr += ` GROUP BY articles.article_id`;
@@ -40,6 +40,7 @@ function readArticles(sort_by = "created_at", order = "DESC", topic) {
   }
 
   return db.query(queryStr).then(({ rows }) => {
+    throwErrorIfEmpty(rows);
     return rows;
   });
 }

@@ -77,11 +77,10 @@ describe("GET /api/articles", () => {
         }
       });
   })
-  test.skip("200: Responds with the data making use of the topic query", () => {
+  test("200: Responds with the data making use of the topic query", () => {
     return request(app)
     .get('/api/articles?topic=cats')
     .then(({body}) => {
-        console.log(body)
         expect(Array.isArray(body.articles)).toBe(true);
         expect(body.articles).toBeSortedBy("created_at", { descending: true });
         for (const article of body.articles) {
@@ -89,6 +88,25 @@ describe("GET /api/articles", () => {
           expect(typeof article.title).toBe("string");
           expect(typeof article.article_id).toBe("number");
           expect(article.topic).toBe("cats");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.comment_count).toBe("string");
+        }
+    })
+  })
+  test("200: Responds with all articles when the topic query is omitted", () => {
+    return request(app)
+    .get('/api/articles?topic=')
+    .expect(200)
+    .then(({body}) => {
+        expect(Array.isArray(body.articles)).toBe(true);
+        expect(body.articles).toBeSortedBy("created_at", { descending: true });
+        for (const article of body.articles) {
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.topic).toBe("string");
           expect(typeof article.created_at).toBe("string");
           expect(typeof article.votes).toBe("number");
           expect(typeof article.article_img_url).toBe("string");
@@ -110,6 +128,14 @@ describe("GET /api/articles", () => {
     .expect(400)
     .then(({body}) => {
         expect(body.msg).toBe("Invalid input")
+    });
+  });
+  test("404: Responds with an error message when passed a non-existent 'topic' query", () => {
+    return request(app)
+    .get('/api/articles?sort_by=article_id&order=ASC&topic=jahdbfajshf')
+    .expect(404)
+    .then(({body}) => {
+        expect(body.msg).toBe("Not found")
     });
   });
 });
