@@ -1,12 +1,14 @@
 const db = require("../db/connection.js");
 const { isValidColumn } = require("./utilityModels.js");
+const format = require("pg-format");
 const {
   throwErrorIfEmpty,
   throwErrorIfNaN,
   throwErrorIfNotAnOrder,
 } = require("../errors/utilFunctions.js");
 
-function readArticles(sort_by, order) {
+function readArticles(sort_by = "created_at", order = "DESC", topic) {
+  console.log(topic);
   let queryStr = `SELECT 
         articles.author, 
         articles.title, 
@@ -17,21 +19,26 @@ function readArticles(sort_by, order) {
         articles.article_img_url, 
         COUNT(comments.comment_id) AS comment_count
         FROM articles
-        LEFT JOIN comments ON articles.article_id = comments.article_id
-        GROUP BY 
-        articles.article_id`;
+        LEFT JOIN comments ON articles.article_id = comments.article_id`;
+
+  if (topic) {
+    queryStr += format(`WHERE articles.topic = %L`, topic);
+  }
+
+  queryStr += ` GROUP BY articles.article_id`;
 
   if (sort_by && isValidColumn(sort_by)) {
-      queryStr += ` ORDER BY ${sort_by}`;
-      if (throwErrorIfNotAnOrder(order)) {
-        queryStr += ` ${order}`;
-      }
-      return db.query(queryStr).then(({ rows }) => {
-        return rows;
-      });
+    queryStr += format(` ORDER BY %I`, sort_by);
   } else {
-    queryStr += " ORDER BY created_at DESC";
+    queryStr += " ORDER BY articles.created_at";
   }
+
+  if (throwErrorIfNotAnOrder(order)) {
+    queryStr += format(` %s`, order.toUpperCase());
+  } else {
+    queryStr += "DESC";
+  }
+
   return db.query(queryStr).then(({ rows }) => {
     return rows;
   });

@@ -81,7 +81,7 @@ describe("GET /api/articles", () => {
     return request(app)
     .get('/api/articles?topic=cats')
     .then(({body}) => {
-        // console.log(body)
+        console.log(body)
         expect(Array.isArray(body.articles)).toBe(true);
         expect(body.articles).toBeSortedBy("created_at", { descending: true });
         for (const article of body.articles) {
