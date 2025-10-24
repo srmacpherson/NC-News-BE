@@ -154,6 +154,7 @@ describe("GET /api/articles/:article_id", () => {
           created_at,
           votes,
           article_img_url,
+          comment_count,
         } = body.article;
         expect(typeof body.article).toBe("object");
         expect(typeof author).toBe("string");
@@ -164,6 +165,7 @@ describe("GET /api/articles/:article_id", () => {
         expect(typeof created_at).toBe("string");
         expect(typeof votes).toBe("number");
         expect(typeof article_img_url).toBe("string");
+        expect(typeof comment_count).toBe("number");
       });
   });
   test("400: Responds with an error message when passed a bad article ID", () => {

@@ -20,7 +20,6 @@ function readArticles(sort_by = "created_at", order = "DESC", topic) {
         FROM articles
         LEFT JOIN comments ON articles.article_id = comments.article_id`;
 
-
   if (topic) {
     queryStr += format(` WHERE articles.topic = %L`, topic);
   }
@@ -48,10 +47,19 @@ function readArticles(sort_by = "created_at", order = "DESC", topic) {
 function readArticleById(article_id) {
   throwErrorIfNaN(article_id);
   return db
-    .query(`SELECT * FROM articles WHERE article_id = $1;`, [article_id])
+    .query(
+      `SELECT articles.*, COUNT(comments.comment_id) AS comment_count 
+        FROM articles  
+        LEFT JOIN comments ON articles.article_id = comments.article_id
+        WHERE articles.article_id = $1 
+        GROUP BY articles.article_id;`,
+      [article_id]
+    )
     .then(({ rows }) => {
       throwErrorIfEmpty(rows);
-      return rows[0];
+      const article = rows[0];
+      article.comment_count = Number(article.comment_count);
+      return article;
     });
 }
 
