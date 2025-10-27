@@ -12,12 +12,12 @@ const config = {};
 if (ENV === "production") {
   config.connectionString = process.env.DATABASE_URL;
   config.max = 2;
+  console.log(`Connected to database: Production, Supabase`);
 } else {
   config.database = process.env.PGDATABASE;
+  console.log(`Connected to database: ${process.env.PGDATABASE}`);
 }
 
 const db = new Pool(config);
-
-console.log(`Connected to database: ${process.env.PGDATABASE}`);
 
 module.exports = db;
