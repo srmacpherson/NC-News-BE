@@ -7,7 +7,8 @@ const { getUsers } = require("./controllers/users.js");
 const { handlePathNotFound } = require("./errors/pathNotFound.js");
 const { handleCustomErrors, handleServerErrors, handlePSQLErrors } = require("./errors/handleCustomErrors.js");
 
-app.use(express.json())
+app.use(express.json());
+app.use("/api", express.static('public'));
 
 app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
