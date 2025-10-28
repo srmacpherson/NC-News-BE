@@ -10,10 +10,12 @@ body {
 }
 
 h1 {
+    font-size: 40px;
     text-align: center;
     margin: 0;
     padding: 30px;
-    background: linear-gradient(0.25turn, #3f87a6, #ebf8e1, #f69d3c);
+    background-color: #3f87a6;
+    color: aliceblue;
 }
 
 .nav-container {
@@ -31,11 +33,18 @@ h1 {
     align-items: center;
     height: 50px;
     flex: 1;
-    border: 2px solid rgb(0, 0, 0);
+    color: black;
+    text-decoration: none;
+    border: 1px solid rgb(0, 0, 0);
 }
 
 .nav-child + .nav-child {
     border-left: none;
+}
+
+.nav-child:hover {
+    background-color: #f69d3c;
+    text-decoration: underline;
 }
 
 main {
@@ -43,6 +52,20 @@ main {
 }
 
 .code-example {
+    display: flex;
     border: black dotted 2px;
     padding: 0.5rem;
+    flex: 1 1 0;
+    min-width: 0;
+    overflow: auto;
+
+}
+
+footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #3f87a6;
+    height: 5rem;
+    color: aliceblue;
 }
