@@ -10,12 +10,20 @@ body {
 }
 
 h1 {
-    font-size: 40px;
+    font-size: 4rem;
     text-align: center;
     margin: 0;
     padding: 30px;
     background-color: #3f87a6;
     color: aliceblue;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+h3 {
+    font-size: 1.5rem;
 }
 
 .nav-container {
@@ -51,6 +59,10 @@ main {
     margin: 4rem 15rem;
 }
 
+section {
+    margin: 3rem 0rem;
+}
+
 .code-example {
     display: flex;
     border: black dotted 2px;
@@ -58,7 +70,7 @@ main {
     flex: 1 1 0;
     min-width: 0;
     overflow: auto;
-
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
 footer {

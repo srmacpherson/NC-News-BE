@@ -23,6 +23,8 @@
             <section>
                 <h3>/api/topics</h3>
                 <p>200: Responds with an object with the key of topics and the value of an array of topic objects.</p>
+                <p>Example URL Queries: 'sort_by=article_id', 'order=asc', 'topic=cats'</p>
+                <p><em>(Defaults to 'sort_by=created_at' and 'order=desc')</em></p>
                 <p>Example Response: <pre class="code-example">{ 
   "topics": [
     { "slug": "football",
@@ -32,8 +34,6 @@
       "description": "Hey good looking, what you got cooking?"
     }
 ]}</pre></p>
-                <p>Example URL Queries: 'sort_by=article_id', 'order=asc', 'topic=cats'</p>
-                <p><em>(Defaults to 'sort_by=created_at' and 'order=desc')</em></p>
             </section>
             <section>
                 <h3>/api/users</h3>
@@ -99,8 +99,8 @@
             </section>
             <section>
                 <h3>/api/articles/:article_id/comments</h3>
-                <p>200: Responds with an object with the key of comments and the value of an array of comments for the given article_id.</p>
                 <p>Parametric Endpoints: :article_id is of type "number"</p>
+                <p>200: Responds with an object with the key of comments and the value of an array of comments for the given article_id.</p>
                 <p>Example Response: <pre class="code-example">{
   "comments": [
     {
@@ -127,12 +127,12 @@
             <h2>POST Requests</h2>
             <section>
                 <h3>/api/articles/:article_id/comments</h3>
+                <p>Parametric Endpoints: :article_id is of type "number"</p>
                 <p>201: Responds with the posted comment.</p>
                 <p>Example Payload and Response: <pre class="code-example">{ 
     username: "butter_bridge", 
     body: "duck, duck, duck, duck, duck, duck... goose!" 
 }</pre></p>
-                <p>Parametric Endpoints: :article_id is of type "number"</p>
             </section>
         </div>
         <!--PUT REQUESTS-->
@@ -140,11 +140,11 @@
             <h2>PUT Requests</h2>
             <section>
                 <h3>/api/articles/:article_id</h3>
+                <p>Parametric Endpoints: :comment_id is of type "number"</p>
                 <p>200: Responds with the updated article.</p>
                 <p>Example Payload and Successful Response: <pre class="code-example">{ 
     inc_votes: -10 
 }</pre></p>
-                <p>Parametric Endpoints: :article_id is of type "number"</p>
             </section>
         </div>
         <!--DELETE REQUESTS-->
@@ -152,8 +152,8 @@
             <h2>DELETE Requests</h2>
             <section>
                 <h3>/api/comments/:comment_id</h3>
-                <p>204: Responds with status 204 and no content.</p>
                 <p>Parametric Endpoints: :comment_id is of type "number"</p>
+                <p>204: Responds with status 204 and no content.</p>
             </section>
         </div>
     </main>
