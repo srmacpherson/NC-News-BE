@@ -11,10 +11,10 @@ app.use(express.json());
 app.use("/api", express.static('public'));
 
 app.get("/api/topics", getTopics);
+app.get("/api/users", getUsers);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles/:article_id/comments", getArticleCommentsById);
-app.get("/api/users", getUsers);
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 app.put("/api/articles/:article_id", incrementVotesByArticleId);
 app.delete("/api/comments/:comment_id", removeCommentById);
