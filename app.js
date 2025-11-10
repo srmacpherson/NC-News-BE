@@ -6,7 +6,9 @@ const { getTopics } = require("./controllers/topics.js");
 const { getUsers } = require("./controllers/users.js");
 const { handlePathNotFound } = require("./errors/pathNotFound.js");
 const { handleCustomErrors, handleServerErrors, handlePSQLErrors } = require("./errors/handleCustomErrors.js");
+const cors = require("cors");
 
+app.use(cors());
 app.use(express.json());
 app.use("/api", express.static('public'));
 
